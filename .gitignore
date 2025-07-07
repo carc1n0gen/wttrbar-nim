@@ -1,0 +1,50 @@
+# Nim
+nimcache/
+nimblecache/
+htmldocs/
+
+# Binaries
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Build output
+dist/
+build/
+bin/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Logs
+*.log
+
+# Cache files
+/tmp/
+
+# Nimble
+.nimble/
+
+# Test results
+testresults/
+tests/results/
+
+# Coverage
+htmlcov/
+.coverage
+coverage.xml
+
+# Local environment
+.env
+.env.local
