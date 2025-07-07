@@ -19,4 +19,4 @@ can symlink it somewhere that is in the path.
 <!-- - `--observation-time` - show the time the current weather conditions were measured -->
 
 ## Credits
-This is a nim port of [wttr](https://github.com/bjesus/wttrbar) created by [bjesus](ttps://github.com/bjesus). I created this project as a way teach myself the basics of nim.
+This is a nim port of [wttrbar](https://github.com/bjesus/wttrbar) created by [bjesus](ttps://github.com/bjesus). I created this project as a way teach myself the basics of nim.
