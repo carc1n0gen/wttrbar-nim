@@ -22,6 +22,9 @@ let weatherUrl = "https://$1/$2?format=j1".format(
     location
 )
 
+var attempts = 0
+let maxAttempts = 20
+
 let cacheFile = fmt"/tmp/wttrbar-$1-$2.json".format(
     location,
     lang.wttrInSubdomain()
@@ -41,11 +44,28 @@ let weather = if isCacheFileRecent:
     let cacheContent = readFile(cacheFile)
     parseJson(cacheContent)
 else:
-    let response = client.getContent(weatherUrl)
-    writeFile(cacheFile, response)
-    parseJson(response)
+    let client = newHttpClient()
+    var result: JsonNode
+    while true:
+        try:
+            let response = client.getContent(weatherUrl)
+            try:
+                result = parseJson(response)
+                writeFile(cacheFile, response)
+                break
+            except JsonParsingError:
+                echo """{"text":"⛓️‍💥", "tooltip":"invalid wttr.in response"}"""
+                quit(0)
+        except HttpRequestError, OSError, IOError:
+            attempts += 1
+            sleep(500 * attempts)
+            
+            if attempts == maxAttempts:
+                echo """{"text":"⛓️‍💥", "tooltip":"cannot access wttr.in"}"""
+                quit(0)
 
-client.close()
+    client.close()
+    result
 
 let currentCondition = weather["current_condition"][0]
 # let nearestAreas = weather["nearest_area"][0]
