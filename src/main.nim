@@ -11,6 +11,8 @@ from cli import parseArgs
 from constants import WEATHER_CODES, WEATHER_CODES_NERD
 import localization
 
+echo """{"tooltip":"Loading...", "class":"loading", "text":"⏳"}"""
+
 let args = parseArgs()
 let lang = args.lang
 
@@ -37,8 +39,6 @@ let isCacheFileRecent = block:
     info.lastWriteTime > tenMinutesAgo
   except OSError:
     false
-
-let client = newHttpClient()
 
 let weather = if isCacheFileRecent:
     let cacheContent = readFile(cacheFile)
