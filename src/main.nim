@@ -136,7 +136,20 @@ proc main() =
         nearestAreas["country"][0]["value"].getStr()
     ))
 
-    # TODO: add observation time if the flag is true
+    if args.observationTime:
+        try:
+            let obsTime = currentCondition["observation_time"].getStr()
+            let parsedTime = parse(obsTime, "h:mm tt")
+            let formattedTime = if args.ampm:
+                obsTime
+            else:
+                parsedTime.format("HH:mm")
+            tooltip.add("$1: $2\n".format(
+                translateObservationTime[lang],
+                formattedTime
+            ))
+        except ValueError, KeyError:
+            discard
 
     # TODO: add forecast for today, tomorrow, and the day after
 
