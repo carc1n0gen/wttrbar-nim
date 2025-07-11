@@ -1,16 +1,18 @@
 import parseopt
 
-from localization import Lang, toLang
+from localization import supportedLanguages
 
 proc parseArgs*(): tuple = 
     var mainIndicator: string = "temp_C"
     var customIndicator: string = ""
     var location: string = ""
     var verticalView: bool = false
+    var ampm: bool = false
     var nerdIcons: bool = false
     var fahrenheit: bool = false
     var mph: bool = false
-    var lang: Lang = toLang("en")
+    var lang: string = "en"
+    var observationTime: bool = false
 
     for kind, key, value in getOpt():
         case kind
@@ -29,6 +31,9 @@ proc parseArgs*(): tuple =
             of "vertical-view":
                 verticalView = true
 
+            of "ampm":
+                ampm = true
+
             of "nerd":
                 nerdIcons = true
 
@@ -39,7 +44,13 @@ proc parseArgs*(): tuple =
                 mph = true
 
             of "lang":
-                lang = toLang(value)
+                if value notin supportedLanguages:
+                    lang = "en"
+                else:
+                    lang = value.toLowerAscii()
+
+            of "observation-time":
+                observationTime = true
 
         of cmdEnd:
             discard
@@ -53,8 +64,10 @@ proc parseArgs*(): tuple =
         customIndicator: customIndicator,
         location: location,
         verticalView: verticalView,
+        ampm: ampm,
         nerdIcons: nerdIcons,
         fahrenheit: fahrenheit,
         mph: mph,
-        lang: lang
+        lang: lang,
+        observationTime: observationTime
     )

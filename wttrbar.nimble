@@ -5,7 +5,7 @@ author        = "Carson Evans"
 description   = "Generate weather info for waybar using wttr.in"
 license       = "MIT"
 srcDir        = "src"
-binDir        = "dist"
+binDir        = "bin"
 namedBin      = {"main": "wttrbar"}.toTable()
 
 # Dependencies

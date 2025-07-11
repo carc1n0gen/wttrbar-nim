@@ -45,7 +45,9 @@ The reason I care about waybar accepting multiple lines of data is so that I
 can show a placeholder like "loading..." in waybar while the http request is
 pending, or the case of PC waking from sleep and not immediately having an
 internet connection, so wttrbar is making multiple http atempts while PC is
-getting the internet connection back.
+getting the internet connection back. Without having a placeholder before data
+is loaded, it can leave your waybar looking a bit strange depending on how your
+styling is done.
 
 ## Credits
 This is a nim port of [wttrbar](https://github.com/bjesus/wttrbar) created by [bjesus](https://github.com/bjesus), with some improvements, and also missing parts (for now). I created this project as a way teach myself the basics of nim.
