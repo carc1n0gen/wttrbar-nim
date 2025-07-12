@@ -45,7 +45,7 @@ proc main() =
         parseJson(cacheContent)
     else:
         let client = newHttpClient()
-        var result: JsonNode = nil
+        var result: JsonNode
         while true:
             try:
                 let response = client.getContent(weatherUrl)
