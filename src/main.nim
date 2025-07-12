@@ -34,9 +34,12 @@ proc main() =
     )
 
     let isCacheFileRecent = block:
-        let info = getFileInfo(cacheFile)
-        let tenMinutesAgo = getTime() - 10.minutes
-        info.lastWriteTime > tenMinutesAgo
+        if not fileExists(cacheFile):
+            false
+        else:
+            let info = getFileInfo(cacheFile)
+            let tenMinutesAgo = getTime() - 10.minutes
+            info.lastWriteTime > tenMinutesAgo
 
     let weather = if isCacheFileRecent:
         let cacheContent = readFile(cacheFile)
