@@ -34,12 +34,9 @@ proc main() =
     )
 
     let isCacheFileRecent = block:
-      try:
         let info = getFileInfo(cacheFile)
         let tenMinutesAgo = getTime() - 10.minutes
         info.lastWriteTime > tenMinutesAgo
-      except OSError:
-        false
 
     let weather = if isCacheFileRecent:
         let cacheContent = readFile(cacheFile)
@@ -47,23 +44,11 @@ proc main() =
     else:
         let client = newHttpClient()
         var result: JsonNode
-        while true:
-            try:
-                let response = client.getContent(weatherUrl)
-                try:
-                    result = parseJson(response)
-                    writeFile(cacheFile, response)
-                    break
-                except JsonParsingError:
-                    echo """{"text":"⛓️‍💥", "tooltip":"invalid wttr.in response"}"""
-                    quit(0)
-            except HttpRequestError, OSError, IOError:
-                attempts += 1
-                sleep(500 * attempts)
-                
-                if attempts == maxAttempts:
-                    echo """{"text":"⛓️‍💥", "tooltip":"can't access wttr.in"}"""
-                    quit(0)
+        while attempts < maxAttempts:
+            let response = client.getContent(weatherUrl)
+            result = parseJson(response)
+            writeFile(cacheFile, response)
+            break
 
         client.close()
         result
@@ -137,19 +122,16 @@ proc main() =
     ))
 
     if args.observationTime:
-        try:
-            let obsTime = currentCondition["observation_time"].getStr()
-            let parsedTime = parse(obsTime, "h:mm tt")
-            let formattedTime = if args.ampm:
-                obsTime
-            else:
-                parsedTime.format("HH:mm")
-            tooltip.add("$1: $2\n".format(
-                translateObservationTime[lang],
-                formattedTime
-            ))
-        except ValueError, KeyError:
-            discard
+        let obsTime = currentCondition["observation_time"].getStr()
+        let parsedTime = parse(obsTime, "h:mm tt")
+        let formattedTime = if args.ampm:
+            obsTime
+        else:
+            parsedTime.format("HH:mm")
+        tooltip.add("$1: $2\n".format(
+            translateObservationTime[lang],
+            formattedTime
+        ))
 
     # TODO: add forecast for today, tomorrow, and the day after
 
