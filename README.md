@@ -49,5 +49,10 @@ getting the internet connection back. Without having a placeholder before data
 is loaded, it can leave your waybar looking a bit strange depending on how your
 styling is done.
 
+## Limitations
+
+- no localized date format for the day afte tomorrow
+  - may modify this part to show translated day of week eventually
+
 ## Credits
-This is a nim port of [wttrbar](https://github.com/bjesus/wttrbar) created by [bjesus](https://github.com/bjesus), with some improvements, and also missing parts (for now). I created this project as a way teach myself the basics of nim.
+This is a nim port of [wttrbar](https://github.com/bjesus/wttrbar) created by [bjesus](https://github.com/bjesus), with some changes, improvements, and also missing parts (for now). I created this project as a way teach myself the basics of nim.

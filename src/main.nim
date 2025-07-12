@@ -3,6 +3,7 @@ import httpclient
 import json
 import options
 import os
+import sequtils
 import strutils
 import times
 import tables
@@ -136,7 +137,39 @@ proc main() =
             formattedTime
         ))
 
-    # TODO: add forecast for today, tomorrow, and the day after
+    let today = now().format("yyyy-MM-dd")
+    let forcast = weather["weather"].elems.filter(proc(item: JsonNode): bool =
+        item["date"].getStr() >= today
+    )
+
+    for i, day in pairs(forcast):
+        tooltip.add("\n<b>")
+
+        if i == 0:
+            tooltip.add("$1".format(translateToday[lang]))
+        elif i == 1:
+            tooltip.add("$1".format(translateTomorrow[lang]))
+        else:
+            # For now since nim doesn't have localized date formatting
+            let date = day["date"].getStr()
+            tooltip.add("$1".format(date))
+
+        tooltip.add("</b>\n")
+        
+        let (maxTemp, minTemp) = if args.fahrenheit:
+            (day["maxtempF"].getStr(), day["mintempF"].getStr())
+        else:
+            (day["maxtempC"].getStr(), day["mintempC"].getStr())
+
+        tooltip.add("$1 $2° $3 $4°".format(
+            if args.nerdIcons: "󰳡" else: "⬆️",
+            maxTemp,
+            if args.nerdIcons: "󰳛" else: "⬇️",
+            minTemp
+        ))
+
+        # TODO: add sunrise/sunset and hourly forecast
+        
 
     data["tooltip"] = tooltip
 
