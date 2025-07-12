@@ -1,4 +1,3 @@
-# Standard library imports
 import httpclient
 import json
 import options
@@ -8,14 +7,11 @@ import strutils
 import times
 import tables
 
-# Local module imports
 from cli import parseArgs
 from constants import WEATHER_CODES, WEATHER_CODES_NERD
 import localization
 
 proc main() =
-    echo """{"tooltip":"Loading...", "class":"loading", "text":"⏳"}"""
-
     let args = parseArgs()
     let lang = args.lang
     var data = Table[string, string]()
@@ -25,6 +21,8 @@ proc main() =
         wttrSubdomains[lang],
         location
     )
+
+    echo """{"tooltip":"Loading...", "class":"loading", "text":"⏳"}"""
 
     var attempts = 0
     let maxAttempts = 20
@@ -47,12 +45,26 @@ proc main() =
         parseJson(cacheContent)
     else:
         let client = newHttpClient()
-        var result: JsonNode
-        while attempts < maxAttempts:
-            let response = client.getContent(weatherUrl)
-            result = parseJson(response)
-            writeFile(cacheFile, response)
-            break
+        var result: JsonNode = nil
+        while true:
+            try:
+                let response = client.getContent(weatherUrl)
+                try:
+                    result = parseJson(response)
+                    writeFile(cacheFile, response)
+                    break
+                except JsonParsingError:
+                    echo """{"text":"⛓️‍💥", "tooltip":"invalid wttr.in response"}"""
+                    quit(0)
+
+            except HttpRequestError, OSError, IOError:
+                inc attempts
+
+                if attempts == maxAttempts:
+                    echo """{"text":"⛓️‍💥", "tooltip":"can't access wttr.in"}"""
+                    quit(0)
+
+                sleep(500 * attempts)
 
         client.close()
         result
